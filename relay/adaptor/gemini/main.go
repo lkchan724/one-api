@@ -283,6 +283,7 @@ func StreamHandler(c *gin.Context, resp *http.Response) (*model.ErrorWithStatusC
 	for scanner.Scan() {
 		data := scanner.Text()
 		data = strings.TrimSpace(data)
+		logger.SysLogf("reading response body by part :\n%s", data)
 		if !strings.HasPrefix(data, "data: ") {
 			continue
 		}

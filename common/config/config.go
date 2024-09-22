@@ -52,7 +52,7 @@ var EmailDomainWhitelist = []string{
 	"foxmail.com",
 }
 
-var DebugEnabled = strings.ToLower(os.Getenv("DEBUG")) == "true"
+var DebugEnabled = true
 var DebugSQLEnabled = strings.ToLower(os.Getenv("DEBUG_SQL")) == "true"
 var MemoryCacheEnabled = strings.ToLower(os.Getenv("MEMORY_CACHE_ENABLED")) == "true"
 
@@ -145,7 +145,7 @@ var InitialRootToken = os.Getenv("INITIAL_ROOT_TOKEN")
 
 var InitialRootAccessToken = os.Getenv("INITIAL_ROOT_ACCESS_TOKEN")
 
-var GeminiVersion = env.String("GEMINI_VERSION", "v1")
+var GeminiVersion = env.String("GEMINI_VERSION", "v1beta")
 
 var OnlyOneLogFile = env.Bool("ONLY_ONE_LOG_FILE", false)
 

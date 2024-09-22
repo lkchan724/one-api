@@ -3,25 +3,23 @@ package gemini
 import (
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/songquanpeng/one-api/common/config"
 	"github.com/songquanpeng/one-api/common/helper"
+	"github.com/songquanpeng/one-api/common/logger"
 	channelhelper "github.com/songquanpeng/one-api/relay/adaptor"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
 	"github.com/songquanpeng/one-api/relay/meta"
 	"github.com/songquanpeng/one-api/relay/model"
 	"github.com/songquanpeng/one-api/relay/relaymode"
+	"io"
+	"net/http"
+	"strings"
 )
 
-type Adaptor struct {
-}
+type Adaptor struct{}
 
-func (a *Adaptor) Init(meta *meta.Meta) {
-
-}
+func (a *Adaptor) Init(meta *meta.Meta) {}
 
 func (a *Adaptor) GetRequestURL(meta *meta.Meta) (string, error) {
 	version := helper.AssignOrDefault(meta.Config.APIVersion, config.GeminiVersion)
@@ -82,6 +80,22 @@ func (a *Adaptor) DoResponse(c *gin.Context, resp *http.Response, meta *meta.Met
 		default:
 			err, usage = Handler(c, resp, meta.PromptTokens, meta.ActualModelName)
 		}
+		if resp != nil {
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				logger.SysLogf("Error reading response body:%s", err)
+
+			} else {
+				logger.SysLogf("Response Body:")
+				logger.SysLogf(string(body))
+			}
+			resp.Body = io.NopCloser(strings.NewReader(string(body)))
+		}
+	}
+
+	// 打印 HTTP 状态码
+	if resp != nil {
+		logger.SysLogf("HTTP Status Code:%d", resp.StatusCode)
 	}
 	return
 }
